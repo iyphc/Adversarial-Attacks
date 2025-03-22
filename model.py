@@ -20,3 +20,4 @@ class LittleCNN(nn.Module): # Наследуемся от nn.Module, чтобы 
         # Выходной слой, softmax не применяется, т.к. CrossEntropyLoss включает log_softmax
         x = self.fc2(x)
         return x
+    

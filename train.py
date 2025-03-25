@@ -1,26 +1,18 @@
 import torch
-import torch.optim as optim
 import torch.nn as nn
 from data import get_dataloaders
 from model import LittleCNN
 from tqdm import tqdm
+from utils import get_device
 from evaluation import evaluate_model
 
-def get_device():
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    elif torch.backends.mps.is_available():
-        return torch.device("mps")
-    else:
-        return torch.device("cpu")
-
-def train_model(epochs=10, learning_rate=0.001, batch_size=128, device='cuda'):
+def train_model(epochs=10, learning_rate=0.001, batch_size=128):
     device = get_device()
     train, test = get_dataloaders(batch_size=batch_size)
     size = len(train.dataset)
     model = LittleCNN().to(device)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     for i in range(epochs):
         model.train()
@@ -41,8 +33,7 @@ def train_model(epochs=10, learning_rate=0.001, batch_size=128, device='cuda'):
             total += y.size(0)
         
         epoch_loss = running_loss / total
-        print(f"{i+1}/{epochs} - Loss: {epoch_loss}") 
-
+        print(f"Epoch {i+1}/{epochs} - Loss: {epoch_loss:.4f}")
 
     test_accuracy = evaluate_model(model, test, device)
     print(f"Test Accuracy: {test_accuracy:.2f}%")

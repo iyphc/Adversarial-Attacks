@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from train import get_device
 from model import LittleCNN
 
-def DeepFool(model, image, num_classes=10, overshoot=0.02, max_iter=50, device='cpu'):
+def DeepFool(model, image, num_classes=10, overshoot=0.02, eps=0.05, max_iter=50, device='cpu'):
     device = get_device()
     model.eval()
     image = image.to(device)
@@ -60,6 +60,15 @@ def DeepFool(model, image, num_classes=10, overshoot=0.02, max_iter=50, device='
 
         r_i = (min_pert / norm_w) * w * (1 + overshoot)
         r_tot += r_i.squeeze()
+
+        current_norm = torch.abs(r_tot).max().item()
+
+        if current_norm > eps:
+            scale = eps / current_norm
+            r_tot = r_tot * scale
+            perturbed_image = torch.clamp(image + r_tot, 0, 1).detach()
+            break
+
         perturbed_image = torch.clamp(image + r_tot, 0, 1).detach()
         i += 1
 
@@ -88,5 +97,6 @@ def RGD(model, image, num_classes=10, alpha=0.005, eps=0.05, max_iter=50, device
         perturbed_image = perturbed_image + alpha * grad_sign
         perturbed_image = torch.min(torch.max(perturbed_image, image - eps), image + eps)
         perturbed_image = torch.clamp(perturbed_image, 0, 1).detach().requires_grad_(True)
+
 
     return perturbed_image

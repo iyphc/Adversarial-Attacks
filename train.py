@@ -22,23 +22,27 @@ def train_model(epochs=10, learning_rate=0.001, batch_size=128, device='cuda'):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-    i = 0
     for i in range(epochs):
-        for batch, (X, y) in enumerate(train):
+        model.train()
+        running_loss = 0
+        total = 0
+
+        for X, y in tqdm(train, desc=f'Epoch {i+1}/{epochs}'):
             X, y = X.to(device), y.to(device)
 
-            # Compute prediction error
             pred = model(X)
             loss = loss_fn(pred, y)
             optimizer.zero_grad()
 
-            # Backpropagation
             loss.backward()
             optimizer.step()
 
-            if batch % 100 == 0:
-                loss, current = loss.item(), (batch + 1) * len(X)
-                print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+            running_loss += loss.item() * X.size(0)
+            total += y.size(0)
+        
+        epoch_loss = running_loss / total
+        print(f"{i+1}/{epochs} - Loss: {epoch_loss}") 
+
 
     test_accuracy = evaluate_model(model, test, device)
     print(f"Test Accuracy: {test_accuracy:.2f}%")
@@ -47,4 +51,4 @@ def train_model(epochs=10, learning_rate=0.001, batch_size=128, device='cuda'):
     return model
 
 if __name__ == '__main__':
-    train_model(epochs=10)
+    train_model(epochs=10, batch_size=256)

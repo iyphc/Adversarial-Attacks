@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-from train import get_device
+from utils import get_device
 from model import LittleCNN
 
 def DeepFool(model, image, num_classes=10, overshoot=0.02, eps=0.05, max_iter=50, device='cpu'):

@@ -29,7 +29,7 @@ pip install -r requirements.txt
 ├── train.py       
 ├── utils.py       
 ├── evaluation.py  
-├── main.py 
+├── main.py  
 ├── .gitignore     
 └── README.md      
 

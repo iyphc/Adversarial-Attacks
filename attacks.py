@@ -75,7 +75,7 @@ def DeepFool(model, image, num_classes=10, overshoot=0.02, eps=0.05, max_iter=50
 
     return perturbed_image
 
-def RGD(model, image, num_classes=10, alpha=0.005, eps=0.05, max_iter=50, device=None):
+def PGD(model, image, num_classes=10, alpha=0.005, eps=0.05, max_iter=50, device=None):
     if device is None:
         device = get_device()
     model.eval()

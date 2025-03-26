@@ -12,7 +12,7 @@ def evaluate_model(model, test_loader, device=None):
     correct = 0
     total = 0
     with torch.no_grad():
-        for images, labels in test_loader:
+        for images, labels in tqdm(test_loader, "Evaluate model"):
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             _, predicted = torch.max(outputs, dim=1)
@@ -29,8 +29,8 @@ def evaluate_attack(model, test_loader, attack_fn, eps=0.05, device=None):
     model.eval()
     successful_attacks = []
     total_attacks = 0
-
-    for images, labels in tqdm(test_loader, desc="Evaluating attack"):
+    print("\n")
+    for images, labels in tqdm(test_loader, desc=f"Evaluating {attack_fn.__name__} attack"):
         images, labels = images.to(device), labels.to(device)
         outputs = model(images)
         _, predicted = torch.max(outputs, dim=1)
@@ -38,16 +38,19 @@ def evaluate_attack(model, test_loader, attack_fn, eps=0.05, device=None):
         mask = (predicted == labels)
         if mask.sum().item() == 0:
             continue
-
+        
         images = images[mask]
         labels = labels[mask]
         total_attacks += images.size(0)
 
-        adv_images = attack_fn(model, images, labels, eps=eps)
-        outputs_adv = model(adv_images)
-        _, predicted_adv = torch.max(outputs_adv, dim=1)
-
-        successful_attacks.extend((predicted_adv != labels).cpu().numpy())
+        i = 0
+        while i < len(images):
+            image, label = images[i], labels[i]
+            adv_image = attack_fn(model, image, label, eps=eps)
+            output_adv = model(adv_image.unsqueeze(0))
+            _, predicted_adv = torch.max(output_adv, dim=1)
+            successful_attacks.extend((predicted_adv != labels).cpu().numpy())
+            i += 1
 
     asr = 100 * np.mean(successful_attacks) if successful_attacks else 0
     return asr, successful_attacks

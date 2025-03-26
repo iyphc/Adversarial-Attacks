@@ -4,8 +4,9 @@ import torch.nn.functional as F
 from utils import get_device
 from model import LittleCNN
 
-def DeepFool(model, image, num_classes=10, overshoot=0.02, eps=0.05, max_iter=50, device='cpu'):
-    device = get_device()
+def DeepFool(model, image, num_classes=10, overshoot=0.02, eps=0.05, max_iter=50, device=None):
+    if device is None:
+        device = get_device()
     model.eval()
     image = image.to(device)
     image = image.clone().detach()
@@ -74,8 +75,9 @@ def DeepFool(model, image, num_classes=10, overshoot=0.02, eps=0.05, max_iter=50
 
     return perturbed_image
 
-def RGD(model, image, num_classes=10, alpha=0.005, eps=0.05, max_iter=50, device='cpu'):
-    device = get_device()
+def RGD(model, image, num_classes=10, alpha=0.005, eps=0.05, max_iter=50, device=None):
+    if device is None:
+        device = get_device()
     model.eval()
     image = image.to(device)
     image = image.clone().detach()

@@ -20,17 +20,9 @@
 - scipy
 - tqdm
 
-
-1. Создайте и активируйте виртуальное окружение:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate      # Для Linux/MacOS
-   venv\Scripts\activate         # Для Windows
-   ```
-2. Установите зависимости: 
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+pip install -r requirements.txt
+```
 
 ---
 

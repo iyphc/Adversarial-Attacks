@@ -39,7 +39,7 @@ pip install -r requirements.txt
 python3 main.py --num_samples 100
 ```
 
-По дефолту num_samples = 500
+Значение по умолчанию: num_samples = 500
 
 ```bash
 python3 main.py

@@ -9,8 +9,14 @@ import numpy as np
 from utils import create_subset_dataloader
 import torch
 import os.path
+import argparse
 
 def main():
+    parser = argparse.ArgumentParser(description='Evaluate model with adversarial attacks')
+    parser.add_argument('--num_samples', type=int, default=100, 
+                        help='Number of samples to use for evaluation (default: 100)')
+    args = parser.parse_args()
+
     device = get_device()
     model = LittleCNN().to(device)
 
@@ -21,7 +27,7 @@ def main():
     _, test_loader = get_dataloaders()
     model.eval()
 
-    num_samples = min(500, len(test_loader.dataset))
+    num_samples = min(args.num_samples, len(test_loader.dataset))
     test_subset = create_subset_dataloader(test_loader, num_samples)
 
     PGD_metrics = evaluate_attack(model, test_subset, PGD, eps=0.05, device=device)

@@ -6,8 +6,9 @@ from tqdm import tqdm
 from utils import get_device
 from evaluation import evaluate_model
 
-def train_model(epochs=10, learning_rate=0.001, batch_size=128):
-    device = get_device()
+def train_model(epochs=10, learning_rate=0.001, batch_size=128, device=None):
+    if device is None:
+        device = get_device()
     train, test = get_dataloaders(batch_size=batch_size)
     size = len(train.dataset)
     model = LittleCNN().to(device)
@@ -42,4 +43,4 @@ def train_model(epochs=10, learning_rate=0.001, batch_size=128):
     return model
 
 if __name__ == '__main__':
-    train_model(epochs=10, batch_size=256)
+    train_model(epochs=10, batch_size=128)

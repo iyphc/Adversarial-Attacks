@@ -90,6 +90,13 @@ def PGD(model, image, num_classes=10, alpha=0.005, eps=0.05, max_iter=50, device
 
     for _ in range(max_iter):
         output = model(perturbed_image.unsqueeze(0))
+
+        _, adv_label = torch.max(output, 1)
+        adv_label = adv_label.item()
+        
+        if (label != adv_label):
+            break
+
         loss = nn.CrossEntropyLoss()(output, torch.tensor([label], device=device))
         
         model.zero_grad()

@@ -60,9 +60,9 @@ def main():
     print(f"95% Доверительный интервал: [{ci[0]:.2%}, {ci[1]:.2%}]")
 
     if ci[0] > 0:
-        print("\nDeepFool значимо лучше PGD\n")
+        print("\nDeepFool лучше PGD\n")
     elif ci[1] < 0:
-        print("\nPGD значимо лучше DeepFool\n")
+        print("\nPGD лучше DeepFool\n")
     else:
         print("\nМетоды одинаково эффективны\n")
 
